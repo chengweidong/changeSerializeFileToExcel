@@ -28,20 +28,23 @@ $error = [];
 $myFile = fopen($fileName, "r") or die("Unable to open file!");
 while(!feof($myFile)){
     $serializeString = fgets($myFile);
-    $unserializeString = unserialize($serializeString);
-    if(preg_match($t1ImeiMatchRule1,$unserializeString['imei']) || preg_match($t1ImeiMatchRule2,$unserializeString['imei'])){
-        $arrayT1[] = $unserializeString;
-    }elseif(preg_match($t2ImeiMatchRule1,$unserializeString['imei']) || preg_match($t2ImeiMatchRule2,$unserializeString['imei'])){
-        $arrayT2[] = $unserializeString;
-    }elseif(preg_match($u1ImeiMatchRule1,$unserializeString['imei']) || preg_match($u1ImeiMatchRule2,$unserializeString['imei']) || preg_match($u1ImeiMatchRule3,$unserializeString['imei']) || preg_match($u1ImeiMatchRule4,$unserializeString['imei'])){
-        $arrayU1[] = $unserializeString;
-    }else{
-        $error[] = $unserializeString;
-    }
+    if(!empty($serializeString)){
+        $unserializeString = unserialize($serializeString);
+        if(preg_match($t1ImeiMatchRule1,$unserializeString['imei']) || preg_match($t1ImeiMatchRule2,$unserializeString['imei'])){
+            $arrayT1[] = $unserializeString;
+        }elseif(preg_match($t2ImeiMatchRule1,$unserializeString['imei']) || preg_match($t2ImeiMatchRule2,$unserializeString['imei'])){
+            $arrayT2[] = $unserializeString;
+        }elseif(preg_match($u1ImeiMatchRule1,$unserializeString['imei']) || preg_match($u1ImeiMatchRule2,$unserializeString['imei']) || preg_match($u1ImeiMatchRule3,$unserializeString['imei']) || preg_match($u1ImeiMatchRule4,$unserializeString['imei'])){
+            $arrayU1[] = $unserializeString;
+        }else{
+            $error[] = $unserializeString;
+        }
+    }    
 }
 
 //根据各种手机型号的数据来创建电子表格
 $objPHPExcel =  new PHPExcel();
+$objPHPExcel->removeSheetByIndex(0);
 //创建第一个表单
 if(!empty($arrayT1)){
     $myWorkSheetT1 = new PHPExcel_Worksheet($objPHPExcel, 'T1众测用户信息');
