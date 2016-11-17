@@ -9,6 +9,8 @@ $purposeFileName = "众测用户招募表.xls";
 $purposeSheetNameT1 = "T1";
 $purposeSheetNameT2 = "T2";
 $purposeSheetNameU1 = "U1";
+$purposeSheetNameM1 = "M1";
+$purposeSheetNameM1L = "M1L";
 //各型号手机的IMEI的匹配规则
 $t1ImeiMatchRule1 = "/^86451602.*/";
 $t1ImeiMatchRule2 = "/^86459302.*/";
@@ -18,10 +20,14 @@ $u1ImeiMatchRule1 = "/^86579002.*/";
 $u1ImeiMatchRule2 = "/^86784002.*/";
 $u1ImeiMatchRule3 = "/^86784102.*/";
 $u1ImeiMatchRule4 = "/^99000716.*/";
+$m1ImeiMatchRule1 = "/^99000717.*/";
+$m1LImeiMatchRule1 = "/^99000718.*/";
 //初始化不同型号手机的容器
 $arrayT1 = [];
 $arrayT2 = [];
 $arrayU1 = [];
+$arrayM1 = [];
+$arrayM1L = [];
 $error = [];
 
 //把数据根据手机型号分类
@@ -36,6 +42,10 @@ while(!feof($myFile)){
             $arrayT2[] = $unserializeString;
         }elseif(preg_match($u1ImeiMatchRule1,$unserializeString['imei']) || preg_match($u1ImeiMatchRule2,$unserializeString['imei']) || preg_match($u1ImeiMatchRule3,$unserializeString['imei']) || preg_match($u1ImeiMatchRule4,$unserializeString['imei'])){
             $arrayU1[] = $unserializeString;
+        }elseif(preg_match($m1ImeiMatchRule1,$unserializeString['imei'])){
+            $arrayM1[] = $unserializeString;
+        }elseif(preg_match($m1LImeiMatchRule1,$unserializeString['imei'])){
+            $arrayM1L[] = $unserializeString;
         }else{
             $error[] = $unserializeString;
         }
@@ -108,6 +118,42 @@ if(!empty($arrayU1)){
     );
 }
 //创建第四个表单
+if(!empty($arrayM1)){
+    $myWorkSheetM1 = new PHPExcel_Worksheet($objPHPExcel, 'M1众测用户信息');
+    $objPHPExcel->addSheet($myWorkSheetM1,$sheetIndex);
+    // $objPHPExcel->getSheet($sheetIndex++);  //获得第四个表单
+    $objPHPExcel->setActiveSheetIndex($sheetIndex++);  //获得第四个表单
+    $objPHPExcel->getActiveSheet()->setCellValue('A1', 'bbsId');
+    $objPHPExcel->getActiveSheet()->setCellValue('B1', 'cloudId');
+    $objPHPExcel->getActiveSheet()->setCellValue('C1', 'imei');
+    $objPHPExcel->getActiveSheet()->setCellValue('D1', 'email');
+    $objPHPExcel->getActiveSheet()->setCellValue('E1', 'time');
+    $objPHPExcel->getActiveSheet()->fromArray(
+        $arrayM1,    // The data to set
+        NULL,        // Array values with this value will not be set
+        'A2'         // Top left coordinate of the worksheet range where
+                     //    we want to set these values (default is A1)
+    );
+}
+//创建第五个表单
+if(!empty($arrayM1L)){
+    $myWorkSheetM1L = new PHPExcel_Worksheet($objPHPExcel, 'M1L众测用户信息');
+    $objPHPExcel->addSheet($myWorkSheetM1L,$sheetIndex);
+    // $objPHPExcel->getSheet($sheetIndex++);  //获得第三个表单
+    $objPHPExcel->setActiveSheetIndex($sheetIndex++);  //获得第三个表单
+    $objPHPExcel->getActiveSheet()->setCellValue('A1', 'bbsId');
+    $objPHPExcel->getActiveSheet()->setCellValue('B1', 'cloudId');
+    $objPHPExcel->getActiveSheet()->setCellValue('C1', 'imei');
+    $objPHPExcel->getActiveSheet()->setCellValue('D1', 'email');
+    $objPHPExcel->getActiveSheet()->setCellValue('E1', 'time');
+    $objPHPExcel->getActiveSheet()->fromArray(
+        $arrayM1L,    // The data to set
+        NULL,        // Array values with this value will not be set
+        'A2'         // Top left coordinate of the worksheet range where
+                     //    we want to set these values (default is A1)
+    );
+}
+//创建第六个表单
 if(!empty($error)){
     $myWorkSheetError = new PHPExcel_Worksheet($objPHPExcel, '发生错误的众测用户信息');
     $objPHPExcel->addSheet($myWorkSheetError,$sheetIndex);
